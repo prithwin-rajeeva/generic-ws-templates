@@ -1,0 +1,5 @@
+#creating new job:
+curl -H "Content-Type: application/json" -X POST --data @request.json http://localhost:8080/job
+
+#checking the status of a job if the job Id werer to be cd57c2a1-f132-46e6-8503-b2d3cd4894c0:
+curl http://localhost:8080/job/cd57c2a1-f132-46e6-8503-b2d3cd4894c0

@@ -1,0 +1,52 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx = "http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-4.2.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+<context:component-scan base-package="com.pronet.rest.controller,com.pronet.service,com.pronet.eao"/>
+<mvc:annotation-driven/>
+<tx:annotation-driven/>
+
+    <beans>
+        <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+            <property name="persistenceUnitName" value="proconpu"/>
+        </bean>
+        <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+            <property name="entityManagerFactory" ref="entityManagerFactory" />
+        </bean>
+        <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+            <property name="maxUploadSize" value="10000000"/>
+        </bean>
+        <bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+            <constructor-arg>
+                <list>
+                    <security:filter-chain pattern="/api/**" filters="basicAuthenticationFilter"/>
+                </list>
+            </constructor-arg>
+        </bean>
+        <bean id="basicAuthenticationFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+            <constructor-arg name="authenticationEntryPoint" ref="rap"/>
+            <constructor-arg name="authenticationManager" ref="am"/>
+        </bean>
+        <bean id = "rap" class="com.pronet.rest.security.RestAuthenticationEntryPoint"/>
+        <security:authentication-manager id="am">
+            <security:authentication-provider>
+                <security:user-service>
+                    <security:user name="prithwin" password="12345" authorities="ROLE_USER" />
+                    <security:user name="ashwin" password="12345" authorities="ROLE_USER, ROLE_ADMIN" />
+                </security:user-service>
+            </security:authentication-provider>
+        </security:authentication-manager>
+    </beans>
+</beans>
